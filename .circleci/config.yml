@@ -82,7 +82,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - main
       - prod:
           context: org-global
           requires:
