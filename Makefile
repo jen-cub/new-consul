@@ -2,7 +2,7 @@ RELEASE := consul
 NAMESPACE := consul
 
 CHART_NAME := hashicorp/consul
-CHART_VERSION ?= v0.7.0
+CHART_VERSION ?= v0.12.0
 
 DEV_CLUSTER ?= testrc
 DEV_PROJECT ?= jendevops1
