@@ -1,3 +1,7 @@
 ---
 global:
   datacenter: jencub
+client:
+  grpc: false
+syncCatalog:
+  addK8SNamespaceSuffix: false
