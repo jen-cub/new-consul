@@ -15,8 +15,9 @@ lint:
 	@find . -type f -name '*.yaml' | xargs yamllint
 
 init:
-	helm3 repo add hashicorp https://helm.releases.hashicorp.com
-	helm3 repo update
+	helm init --client-only
+	helm repo add hashicorp https://helm.releases.hashicorp.com
+	helm repo update
 
 dev: lint init
 ifndef CI
@@ -24,8 +25,7 @@ ifndef CI
 endif
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
-	helm3 upgrade --install --wait $(RELEASE) \
-		--set grafana.adminPassword=$(DEV_GRAFANA_PW) \
+	helm upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
@@ -36,4 +36,4 @@ destroy:
 	helm3 uninstall $(RELEASE) -n $(NAMESPACE)
 
 history:
-	helm3 history $(RELEASE) -n $(NAMESPACE) --max=5
+	helm history $(RELEASE) -n $(NAMESPACE) --max=5
