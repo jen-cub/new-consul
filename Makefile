@@ -1,4 +1,4 @@
-RELEASE := consul
+RELEASE := jc-consul
 NAMESPACE := consul
 
 CHART_NAME := hashicorp/consul
