@@ -1,5 +1,4 @@
 ---
-fullnameOverride: consul
 global:
   datacenter: jencub
   image: consul:1.4.4
