@@ -9,7 +9,7 @@ DEV_ZONE ?= australia-southeast1-c
 
 SHELL := /bin/bash
 
-CHART_VERSION ?= v0.10.0
+CHART_VERSION ?= v0.18.0
 
 CONSUL_NAMESPACE ?= consul
 
