@@ -1,39 +1,44 @@
 RELEASE := jc-consul
 NAMESPACE := consul
 
-CHART_NAME := hashicorp/consul
-CHART_VERSION ?= 0.18.0
-
 DEV_CLUSTER ?= testrc
 DEV_PROJECT ?= jendevops1
 DEV_ZONE ?= australia-southeast1-c
 
 .DEFAULT_TARGET: status
 
-lint:
-	@find . -type f -name '*.yml' | xargs yamllint
-	@find . -type f -name '*.yaml' | xargs yamllint
+SHELL := /bin/bash
 
-init:
-	helm init --client-only
-	helm repo add hashicorp https://helm.releases.hashicorp.com
-	helm repo update
+CHART_VERSION ?= v0.7.0
 
-dev: lint init
-ifndef CI
-	$(error Please commit and push, this is intended to be run in a CI environment)
-endif
+CONSUL_NAMESPACE ?= consul
+
+.DEFAULT_GOAL := src
+
+.PHONY: clean
+clean:
+	rm -fr src
+
+src:
+	mkdir -p src
+	curl -L https://github.com/hashicorp/consul-helm/archive/$(CHART_VERSION).tar.gz | tar zx -C src --strip-components 1
+
+.PHONY: namespace
+namespace:
+	kubectl get ns $(NAMESPACE) || kubectl create ns $(NAMESPACE)
+
+.PHONY: dev
+dev: src namespace helm-install-dev
+
+.PHONY: prod
+prod: src namespace helm-install-prod
+
+.PHONY: helm-install-dev
+helm-install-dev:
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
-	helm upgrade --install --wait $(RELEASE) \
-		--namespace=$(NAMESPACE) \
-		--version $(CHART_VERSION) \
-		-f values.yaml \
-		$(CHART_NAME)
-	$(MAKE) history
+	helm upgrade --install --force --wait jc-consul \
+	--namespace=$(CONSUL_NAMESPACE) \
+	-f values.yaml \
+	src
 
-destroy:
-	helm3 uninstall $(RELEASE) -n $(NAMESPACE)
-
-history:
-	helm history $(RELEASE) -n $(NAMESPACE) --max=5
