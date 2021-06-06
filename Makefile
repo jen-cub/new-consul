@@ -44,7 +44,7 @@ prod: src namespace helm-install-prod
 
 .PHONY: helm-install-dev
 helm-install-dev:
-        gcloud config set project $(DEV_PROJECT)
+	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
 	helm delete jc-consul
 	sleep 30
