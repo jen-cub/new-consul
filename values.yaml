@@ -1,4 +1,10 @@
 ---
 global:
   datacenter: jencub
-  nameOverride: jc-consul
+  nameOverride: jc
+  image: consul:1.4.4
+  imageK8S: hashicorp/consul-k8s:0.7.0
+client:
+  grpc: false
+syncCatalog:
+  addK8SNamespaceSuffix: false
