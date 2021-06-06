@@ -37,7 +37,7 @@ namespace:
 	kubectl get ns $(NAMESPACE) || kubectl create ns $(NAMESPACE)
 
 .PHONY: dev
-dev: src namespace helm-install-dev
+dev: src helm-install-dev
 
 .PHONY: prod
 prod: src namespace helm-install-prod
