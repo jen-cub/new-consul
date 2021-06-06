@@ -15,6 +15,15 @@ CONSUL_NAMESPACE ?= consul
 
 .DEFAULT_GOAL := src
 
+lint: lint-yaml lint-ci
+
+lint-yaml:
+	@find . -type f -name '*.yml' | xargs yamllint
+	@find . -type f -name '*.yaml' | xargs yamllint
+
+lint-ci:
+	@circleci config validate
+
 .PHONY: clean
 clean:
 	rm -fr src
