@@ -1,4 +1,3 @@
 ---
 global:
   datacenter: jencub
-  nameOverride:  consul
