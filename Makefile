@@ -1,28 +1,10 @@
-RELEASE := jc-consul
-NAMESPACE := consul
-
-DEV_CLUSTER ?= testrc
-DEV_PROJECT ?= jendevops1
-DEV_ZONE ?= australia-southeast1-c
-
-.DEFAULT_TARGET: status
-
 SHELL := /bin/bash
 
-CHART_VERSION ?= v0.18.0
+CHART_VERSION ?= v0.7.0
 
 CONSUL_NAMESPACE ?= consul
 
 .DEFAULT_GOAL := src
-
-lint: lint-yaml lint-ci
-
-lint-yaml:
-	@find . -type f -name '*.yml' | xargs yamllint
-	@find . -type f -name '*.yaml' | xargs yamllint
-
-lint-ci:
-	@circleci config validate
 
 .PHONY: clean
 clean:
@@ -34,22 +16,26 @@ src:
 
 .PHONY: namespace
 namespace:
-	kubectl get ns $(NAMESPACE) || kubectl create ns $(NAMESPACE)
+	kubectl get ns $(CONSUL_NAMESPACE) || kubectl create ns $(CONSUL_NAMESPACE)
 
 .PHONY: dev
-dev: src helm-install-dev
+dev: src namespace helm-install-dev
 
 .PHONY: prod
 prod: src namespace helm-install-prod
 
 .PHONY: helm-install-dev
 helm-install-dev:
-	gcloud config set project $(DEV_PROJECT)
-	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
-	helm delete jc-consul
-	sleep 30
-	helm upgrade --install --force --wait jc \
+	helm upgrade --install --force --wait p4-consul \
 	--namespace=$(CONSUL_NAMESPACE) \
 	-f values.yaml \
+	-f env/development/values.yaml \
 	src
 
+.PHONY: helm-install-prod
+helm-install-prod:
+	helm upgrade --install --force --wait p4-consul \
+	--namespace=$(CONSUL_NAMESPACE) \
+	-f values.yaml \
+	-f env/production/values.yaml \
+	src
