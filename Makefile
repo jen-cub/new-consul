@@ -52,7 +52,6 @@ endif
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
-		-f env/development/values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
 
